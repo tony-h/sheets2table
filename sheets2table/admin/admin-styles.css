@@ -21,7 +21,7 @@
 	
 	.warning {
 		color: #404033;
-		background-color: #FDFDEF;
+		background-color: #FDFDC0;
 		border: 1px solid;		
 	}
 	
@@ -38,8 +38,7 @@
 		color: #000099;
 		background-color: #f7f7f9;
 		border: 1px solid;
-	}
-	
+	}	
 	/* End display message styles */
 
 	/* File management table styles */
@@ -55,8 +54,7 @@
 	table.csv-files td.delete {
 		text-align: center;
 		padding-left: 10px;
-	}
-	
+	}	
 	/*  End file management table styles */
 	
 	input[type="text"] {
@@ -64,7 +62,7 @@
 	}
 	
 	table{
-		width:100%;		
+		width:100%;
 	}
 
 	.tdleft {
@@ -87,7 +85,7 @@
 		font-weight: bold;
 	}
 
-	form.shortcodes-a {		
+	form.shortcodes-a {	
 		padding: 5px;
 	}
 	
@@ -96,13 +94,14 @@
 		margin: 0 10px 5px 0;
 		border-radius: 4px;
 		border: 1px solid rgb(163, 172, 187);
-	}	
+	}
+	
 	form.shortcodes input[type=submit] {
 		margin-top: 10px;
 		margin-bottom: 10px;
 	}
 	
 	.hide {
-		display: none;	
+		display: none;
 	}
 </style>

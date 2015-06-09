@@ -2,24 +2,30 @@
 /*
  * Displays the shortcodes available for use and allows the user to customize a shortcode 
  *	
- * LICENSE: The MIT License (MIT)
+ * LICENSE: GNU General Public License (GPL) version 3
  *
  * @author     Tony Hetrick
  * @copyright  [2015] [tonyhetrick.com]
- * @license    http://choosealicense.com/licenses/mit/
+ * @license    https://www.gnu.org/licenses/gpl.html
 */
+
+# Wordpress security recommendation
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 ?>
 
 <div class="wrap">
 	<h2>Sheets2Table - Shortcode Configuration</h2>
 	<p>Sheets2Table plugin makes use of custom shortcodes that render a table based on the data in the CSV file.<p>
+	<p>Copy/paste a shortcode to your post or page to display the contents of the Google Sheet as a table.</p>
 	<p>These codes provide a template or starting point to help customize the fields to display. Please note: The <i>columns</i> and <i>titles</i> should contain the same number of elements.</p>
+	<hr />
 <?php 
 
+	# Look for a shortcode in the GET request.
 	$shortcode = S2T_Functions::get_GET_string("shortcode");
 
-	# If processing a GET/POST request. Else display all of the codes
+	# If processing a GET/POST request, display customize form. Otherwise display all of the codes
 	if ($shortcode != "") {
 		customize_shortcode($shortcode);
 	} else {
@@ -41,14 +47,15 @@ function display_short_codes() {
 	global $s2t_message;
 	
 	# Get the list of files to build shortcodes from
-	$csv_files = glob(SHEETS2TABLE_RESOURCES_DIR . "/*.csv");
+	$csv_files = glob($GLOBALS['Sheets2Table']->get_resources_dir() . "/*.csv");
 	$count = count($csv_files);
 	
-	# No files. Exit script.
-	if ($count <= 0) {	
-		$s2t_message->print_message("No 'csv' file exists.", $s2t_message->warning);
+	# If no files are found, write a message and exit function
+	if (count($csv_files) == 0 || !$csv_files) { 
+		$message = "There are no CSV files.";
+		$s2t_message->print_message($message, $s2t_message->warning);		
 		return;
-	}	
+	}
 	
 	# Loop through each csv file and build the default shortcodes
 	foreach($csv_files as $csv) { 
@@ -82,9 +89,7 @@ function display_short_codes() {
 		
 	if ($options == null)
 		$options = array();
-	
-	$column_count = count($columns);
-
+		
 	$column_list = "";
 	foreach($columns as $columnName) { 
 		$column_list .= $columnName . ", ";
@@ -99,8 +104,14 @@ function display_short_codes() {
 	
 	echo "<i>$file_name</i> code</h4>";
 
-		# Get the shortcode value from the global
-		$s2t_render_table_shortcode = SHEETS2TABLE_RENDER_TABLE_SHORTCODE;
+	# Produce a warning for empty codes
+	if (count($columns) == 0) {
+		$message = "Please note: This shortcode contains no data";
+		$s2t_message->print_message($message, $s2t_message->warning);
+	}
+
+	# Get the shortcode value from the global
+	$s2t_render_table_shortcode = $GLOBALS['Sheets2Table']->get_render_table_shortcode();
 $shortcode = <<<EOD
 [$s2t_render_table_shortcode csv_file="$file_name" columns="%s" titles="%s" options="%s"]
 EOD;
@@ -119,7 +130,8 @@ EOD;
  */
  function customize_shortcode($csv_file_name) {
 
- 	global $s2t_message; 
+ 	global $s2t_message;
+
 	$s2t_csv = new S2T_CSV($csv_file_name);
 
 	# Get the list of columns
@@ -136,12 +148,6 @@ EOD;
 		$columns = S2T_Functions::get_POST_array("column");
 		$options = S2T_Functions::get_POST_array("option");
 	
-		# Produce a warning for empty codes
-		if (count($columns) == 0) {
-			$message = "Please note: This shortcode contains no data";
-			$s2t_message->print_message($message, $s2t_message->warning);
-		}
-		
 		display_shortcode($csv_file_name, $columns, $options);
 	}
 }
@@ -232,10 +238,11 @@ function insert_option_checkboxes($option_list) {
  */
  function build_check_box($name, $value, $checked, $display_text) {
 ?>
-		<label><input type="checkbox" name="<?php echo $name; ?>" 
-						value="<?php echo $value ?>" 
-						<?php echo $checked ?>/>
-						<?php echo $display_text ?>
+		<label>
+			<input type="checkbox" name="<?php echo $name; ?>" 
+					value="<?php echo $value ?>" 
+					<?php echo $checked ?>/>
+					<?php echo $display_text ?>
 		</label><br />
 <?php
 }

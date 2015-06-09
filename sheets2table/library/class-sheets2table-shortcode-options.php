@@ -3,12 +3,15 @@
  * The S2T_Shortcode_Options class is storage container for the shortcodes. 
  * It also contains the master shortcode list.
  *	
- * LICENSE: The MIT License (MIT)
+ * LICENSE: GNU General Public License (GPL) version 3
  *
  * @author     Tony Hetrick
  * @copyright  [2015] [tonyhetrick.com]
- * @license    http://choosealicense.com/licenses/mit/
+ * @license    https://www.gnu.org/licenses/gpl.html
 */
+
+# Wordpress security recommendation
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 /**
  * This class contains the options for use in the shortcodes. 
@@ -102,8 +105,7 @@
 	 *
 	 * @return array an array of all options
 	 */
-	public function get_options_array() {
-	
+	public function get_options_array() {	
 		return $this->_options_list;	
 	}
 	

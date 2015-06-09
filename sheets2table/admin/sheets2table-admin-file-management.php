@@ -2,17 +2,20 @@
 /*
  * Contains file management operations that allow the user to perform basic file operations
  *	
- * LICENSE: The MIT License (MIT)
+ * LICENSE: GNU General Public License (GPL) version 3
  *
  * @author     Tony Hetrick
  * @copyright  [2015] [tonyhetrick.com]
- * @license    http://choosealicense.com/licenses/mit/
+ * @license    https://www.gnu.org/licenses/gpl.html
 */
-	
+
+# Wordpress security recommendation
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
+
 ?>
 	<div class="wrap">
 		<h2>SheetsToTable File Management Tools</h2>
-		<p>Perform basic file-based operations</p>
+		<p>Perform basic file-based operations.</p>
 		<hr />
 <?php
 	
@@ -64,7 +67,7 @@ function process_form_data($delete_file_name) {
 		} else {
 			global $s2t_message;
 			$message = "Cancelled file delete for '$file_name'";
-			$s2t_message->print_message($message, $s2t_message->information);		
+			$s2t_message->print_message($message, $s2t_message->information);
 		}
 	}
 }
@@ -77,10 +80,13 @@ function process_form_data($delete_file_name) {
 function display_files() {
 
 	# Get the list of files
-	$csv_files = glob(SHEETS2TABLE_RESOURCES_DIR . "/*.csv");
+	$csv_files = glob($GLOBALS['Sheets2Table']->get_resources_dir() . "/*.csv");
 
-	if (count($csv_files) == 0) { 
-		echo "<p>There are no CSV files.</p>";
+	# If no files are found, write a message and return
+	if (count($csv_files) == 0 || !$csv_files) { 
+		global $s2t_message;
+		$message = "There are no CSV files.";
+		$s2t_message->print_message($message, $s2t_message->warning);
 		return;
 	}
 ?>
@@ -106,7 +112,7 @@ function display_files() {
 				<td class="delete"><a href="<?php echo $delete_url; ?>" ><img height="16px" src="<?php echo $delete_file_icon_url; ?>"></a></td>
 			</tr>
 <?php 
-	}                  
+	}
 ?> 
 		</table>
 <?php

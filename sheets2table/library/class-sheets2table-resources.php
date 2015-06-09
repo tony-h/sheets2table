@@ -2,12 +2,15 @@
 /*
  * Contains the name of any resources such as images or icons.
  *	
- * LICENSE: The MIT License (MIT)
+ * LICENSE: GNU General Public License (GPL) version 3
  *
  * @author     Tony Hetrick
  * @copyright  [2015] [tonyhetrick.com]
- * @license    http://choosealicense.com/licenses/mit/
+ * @license    https://www.gnu.org/licenses/gpl.html
 */
+
+# Wordpress security recommendation
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 /**
  * This class contains a list of all resources. 
@@ -29,7 +32,7 @@ class S2T_Resources {
      */
 	public static function get_delete_icon_url() {
 	
-		return SHEETS2TABLE_RESOURCES_URL . "/" . S2T_Resources::$delete_icon;
+		return $GLOBALS['Sheets2Table']->get_resources_url() . "/" . S2T_Resources::$delete_icon;
 	}
 }
 

@@ -2,18 +2,21 @@
 /*
  * The S2T_Admin class which controls the sheets2table admin code
  *	
- * LICENSE: The MIT License (MIT)
+ * LICENSE: GNU General Public License (GPL) version 3
  *
  * @author     Tony Hetrick
  * @copyright  [2015] [tonyhetrick.com]
- * @license    http://choosealicense.com/licenses/mit/
+ * @license    https://www.gnu.org/licenses/gpl.html
 */
+
+# Wordpress security recommendation
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 // Initialize the plugin
 add_action( 'plugins_loaded', create_function( '', '$S2T_Admin = new S2T_Admin;' ) );
 
 # PHP includes go here. Any HTML includes go in function plugin_options_page()
-include(SHEETS2TABLE_LIBRARY_DIR . '/class-sheets2table-message.php');
+include($GLOBALS['Sheets2Table']->get_library_dir() . '/class-sheets2table-message.php');
 
 /*
  * The main admin class.  
@@ -26,7 +29,7 @@ include(SHEETS2TABLE_LIBRARY_DIR . '/class-sheets2table-message.php');
 		2) Duplicate the function that reads: function register_abc_admin()
 		3) Rename it and change data
 		4) Duplicate the add_action function call in the constructor (this determines the tab order)
-		5) Match the function call to the above name	
+		5) Match the function call to the above name
  *
  * @since 0.4.0
  *
@@ -40,6 +43,7 @@ class S2T_Admin {
 	private $shortcodes_admin_key = 'sheets2table-admin-shortcodes';
 	private $file_management_admin_key = 'sheets2table-admin-file-management';
 	private $debug_admin_key = 'sheets2table-admin-debug';
+	private $help_admin_key = 'sheets2table-admin-help';
 	private $plugin_settings_tabs = array();
 	
 	/*
@@ -53,6 +57,7 @@ class S2T_Admin {
 		add_action('admin_init', array(&$this, 'register_shortcodes_admin'));
 		add_action('admin_init', array(&$this, 'register_file_management_admin'));
 		add_action('admin_init', array(&$this, 'register_debug_admin'));
+		add_action('admin_init', array(&$this, 'register_help_admin'));
 		add_action('admin_menu', array(&$this, 'add_admin_menus'));
 	}
 	
@@ -82,6 +87,7 @@ class S2T_Admin {
 	 * @since 0.4.0
 	 *
 	 */
+
 	function register_file_management_admin() {
 		$this->plugin_settings_tabs[$this->file_management_admin_key] = 'File Management';
 	}
@@ -94,9 +100,20 @@ class S2T_Admin {
 	 *
 	 */
 	function register_debug_admin() {
-		$this->plugin_settings_tabs[$this->debug_admin_key] = 'Troubleshooting';
+		$this->plugin_settings_tabs[$this->debug_admin_key] = 'Developer Troubleshooting';
 	}
-	
+
+	/*
+	 * Registers the help settings and appends the key to the tabs 
+	 * array of the object.
+	 *
+	 * @since 0.4.0
+	 *
+	 */
+	function register_help_admin() {
+		$this->plugin_settings_tabs[$this->help_admin_key] = 'Help';
+	}
+
 	/*
 	 * Called during admin_menu, adds an option page under Settings, rendered
 	 * using the plugin_options_page method.
@@ -140,7 +157,7 @@ class S2T_Admin {
 		require_once $tab . '.php';
 
 		#--- This is where any common non-php includes for the admin code goes ---#
-		include(SHEETS2TABLE_ADMIN_DIR . '/admin-styles.css');
+		include($GLOBALS['Sheets2Table']->get_admin_dir() . '/admin-styles.css');
 	}
 	
 	/*
@@ -153,7 +170,6 @@ class S2T_Admin {
 
 		$current_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : $this->sheets_admin_key;
 
-		screen_icon();
 		echo '<h2 class="nav-tab-wrapper">';
 		
 		foreach ( $this->plugin_settings_tabs as $tab_key => $tab_caption ) {

@@ -2,15 +2,18 @@
 /*
  * Builds an HTML table based on the data in the CSV file
  *	
- * LICENSE: The MIT License (MIT)
+ * LICENSE: GNU General Public License (GPL) version 3
  *
  * @author     Tony Hetrick
  * @copyright  [2015] [tonyhetrick.com]
- * @license    http://choosealicense.com/licenses/mit/
+ * @license    https://www.gnu.org/licenses/gpl.html
 */
 
-require_once SHEETS2TABLE_LIBRARY_DIR . '/class-sheets2table-shortcode-options.php';
-require_once SHEETS2TABLE_LIBRARY_DIR . '/class-sheets2table-csv.php';
+# Wordpress security recommendation
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
+
+require_once $GLOBALS['Sheets2Table']->get_library_dir() . '/class-sheets2table-shortcode-options.php';
+require_once $GLOBALS['Sheets2Table']->get_library_dir() . '/class-sheets2table-csv.php';
 
 /**
  * Builds an HTML table from the data in a CSV file
@@ -33,7 +36,7 @@ Class S2T_Table {
 	public function build_table($csv_file, $columns_array, $columns_titles, $options_array) {
 
 		$s2t_csv = new S2T_CSV($csv_file);
-		$rows = $s2t_csv->convert_to_array();
+		$rows = $s2t_csv->convert_to_array();		
 
 		# Get the options
 		$shortcode_options = new S2T_Shortcode_Options($options_array);
@@ -177,18 +180,17 @@ EOD;
 		# in the $columns_array are omitted
 		$column_index_array = S2T_Table::get_column_indexes_to_display($columns_array, $rows[0]);
 
-
 		# Iterate through each row to build a corresponding <tr> tag
-		foreach($rows as $row) {
+		for($i = 1; $i < count($rows); $i++) {
 
 			$td_html = "";
 
 			# Iterate through each column to build a corresponding <td> tag
 			# The column data may be a specific subset of the total column data
-			for ($i = 0; $i < count($column_index_array); $i++) { 
+			for ($j = 0; $j < count($column_index_array); $j++) { 
 			
 				# Get the data for the particular column index
-				$td_data = $row[$column_index_array[$i]];
+				$td_data = $rows[$i][$column_index_array[$j]];
 
 				 # Assemble the HTML
 				 $td_html .= sprintf($td_html_format, $td_data);

@@ -2,12 +2,15 @@
 /*
  * Provides functionality for the CSV file
  *	
- * LICENSE: The MIT License (MIT)
+ * LICENSE: GNU General Public License (GPL) version 3
  *
  * @author     Tony Hetrick
  * @copyright  [2015] [tonyhetrick.com]
- * @license    http://choosealicense.com/licenses/mit/
+ * @license    https://www.gnu.org/licenses/gpl.html
 */
+
+# Wordpress security recommendation
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 /**
  * S2T_CSV handles the CSV file and all functions surrounding it
@@ -51,7 +54,7 @@ Class S2T_CSV {
 		# Prepend the dir to the file name
 		if (!file_exists($file_path)) {
 			$this->_file_name = $file_path;
-			$this->_file_path = SHEETS2TABLE_RESOURCES_DIR . "/$file_path";
+			$this->_file_path = $GLOBALS['Sheets2Table']->get_resources_dir() . "/$file_path";
 		} else {
 			$this->_file_name = basename($file_path);
 			$this->_file_path = $file_path; 
@@ -67,7 +70,7 @@ Class S2T_CSV {
 	 */
 	public function is_valid_file() {
 		
-		if (!file_exists($this->_file_path) || filesize($this->_file_path) <= 1)
+		if (!file_exists($this->_file_path) || filesize($this->_file_path) <= 0)
 			return false;
 		else
 			return true;		
@@ -114,7 +117,7 @@ Class S2T_CSV {
 	 * @return string URL of the file
 	 */
 	public function get_file_url() {
-		return SHEETS2TABLE_RESOURCES_URL . "/" . $this->_file_name; 
+		return $GLOBALS['Sheets2Table']->get_resources_url() . "/" . $this->_file_name; 
 	}	
 	
 	/**
@@ -164,10 +167,17 @@ Class S2T_CSV {
 	 *
 	 * @since 0.4.0
 	 *
-	 * @return array containing the CSV headers if valid file, otherise an empty array.
+	 * @return array containing the CSV headers if valid file, otherwise an empty array.
 	 */
 	public function get_headers() {
-		return $this->convert_to_array()[0];
+	
+		$array = $this->convert_to_array();
+		
+		if (count($array) > 0) {
+			return $array[0];
+		} else {
+			return array();
+		}
 	}
 }
 

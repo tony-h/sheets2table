@@ -2,12 +2,15 @@
 /*
  * Gets a CSV file from Google Sheets 
  *	
- * LICENSE: The MIT License (MIT)
+ * LICENSE: GNU General Public License (GPL) version 3
  *
  * @author     Tony Hetrick
  * @copyright  [2015] [tonyhetrick.com]
- * @license    http://choosealicense.com/licenses/mit/
+ * @license    https://www.gnu.org/licenses/gpl.html
 */
+
+# Wordpress security recommendation
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 # TODO: This init section needs to be redone using the WP settings code
 
@@ -18,7 +21,7 @@ $google_sheets_id = S2T_Functions::read_from_settings_file($google_sheets_id_set
 $save_as_settings_file = "save_as.txt";
 $save_as = S2T_Functions::read_from_settings_file($save_as_settings_file);
 
-# Get the value from the form POST operation, which is most upto date value
+# Get the values from the form POST operation, which are the most up to date values
 if (S2T_Functions::get_POST_string('google_sheets_id') != "") {
 	$google_sheets_id = trim(S2T_Functions::get_POST_string('google_sheets_id'));
 }
@@ -30,7 +33,7 @@ if (S2T_Functions::get_POST_string('save_as') != "") {
 
 <div class="wrap">
 	<h2>Sheets2Table - Get Data</h2>
-	<p>This sections allows an admin to get a remote CSV file from Google Sheet.</p>
+	<p>This sections allows a Wordpress admin to get a remote CSV file from Google Sheet.</p>
 	<hr />
 	
 	<form name="get_data" method="post" action="<?php echo S2T_Functions::get_server_path_request(); ?>">
@@ -101,15 +104,22 @@ function get_csv_file($google_sheets_id, $save_as_file_name) {
 	$message = "Retrieving Google Sheet from <a href=\"$csv_url\">$csv_url</a>";
 	$s2t_message->print_message($message);
 	
-	# Get the file and save
-	$downloaded_file_path = SHEETS2TABLE_RESOURCES_DIR . "/$save_as_file_name";
-	file_put_contents($downloaded_file_path, file_get_contents($csv_url));
+	# Get the file contents
+	$downloaded_csv_contents = @file_get_contents($csv_url);
+	$downloaded_file_path = $GLOBALS['Sheets2Table']->get_resources_dir() . "/$save_as_file_name";
+	
+	# Do not create an empty file if nothing was retrieved. An error will be generated later.
+	if (!empty($downloaded_csv_contents)) {
+		file_put_contents($downloaded_file_path, $downloaded_csv_contents);
+	}
+	
 	$s2t_csv = new S2T_CSV($downloaded_file_path);
 	
 	# Verify the file was downloaded. If not, display message and return empty string
 	if (!$s2t_csv->is_valid_file()) {
 	
-		$message = "File not retrieved. Please verify the URL.";
+		$message = "File not retrieved. Please verify: 1) The above URL downloads a .csv file. 
+					2) The sharing settings are set to anyone with a link can view.";
 		$s2t_message->print_message($message, $s2t_message->error);
 		$downloaded_file_path = "";
 		
@@ -128,7 +138,7 @@ function get_csv_file($google_sheets_id, $save_as_file_name) {
 }
 
 /* 
- * Displays the data to the screen for quick verifications
+ * Displays the data to the screen for quick verification
  *
  * @since 0.4.0
  *

@@ -2,15 +2,18 @@
 /*
  * Handles any shortcodes for the Sheets2Table plugin
  *	
- * LICENSE: The MIT License (MIT)
+ * LICENSE: GNU General Public License (GPL) version 3
  *
  * @author     Tony Hetrick
  * @copyright  [2015] [tonyhetrick.com]
- * @license    http://choosealicense.com/licenses/mit/
+ * @license    https://www.gnu.org/licenses/gpl.html
 */
 
+# Wordpress security recommendation
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
+
 #short codes
-add_shortcode(SHEETS2TABLE_RENDER_TABLE_SHORTCODE, 'handle_st2_render_table_shortcode');
+add_shortcode($GLOBALS['Sheets2Table']->get_render_table_shortcode(), 'handle_st2_render_table_shortcode');
 
 /**
  * Handles the 'sheets2table-render-table' shortcode

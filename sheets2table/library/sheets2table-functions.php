@@ -2,13 +2,15 @@
 /*
  * General functions or utilities for Sheets2Table
  *	
- * LICENSE: The MIT License (MIT)
+ * LICENSE: GNU General Public License (GPL) version 3
  *
  * @author     Tony Hetrick
  * @copyright  [2015] [tonyhetrick.com]
- * @license    http://choosealicense.com/licenses/mit/
+ * @license    https://www.gnu.org/licenses/gpl.html
 */
 
+# Wordpress security recommendation
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 /**
  * S2T_Functions contains commonly used static functions 
@@ -30,7 +32,7 @@
 	public static function write_to_settings_file($file_name, $value) {
 
 		$value = trim($value);
-		$full_path = SHEETS2TABLE_RESOURCES_DIR . "/$file_name";
+		$full_path = $GLOBALS['Sheets2Table']->get_resources_dir() . "/$file_name";
 		file_put_contents($full_path, $value);	
 	}
 
@@ -44,7 +46,7 @@
 	 */
 	public static function read_from_settings_file($file_name) {
 
-		$full_path = SHEETS2TABLE_RESOURCES_DIR . "/$file_name";
+		$full_path = $GLOBALS['Sheets2Table']->get_resources_dir() . "/$file_name";
 
 		if (file_exists($full_path)) {
 			return file_get_contents($full_path);
