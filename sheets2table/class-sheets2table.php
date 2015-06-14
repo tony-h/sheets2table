@@ -12,6 +12,24 @@
 # Wordpress security recommendation
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
+# Preliminary stuff
+
+// Plugin base dir/url constants
+define("SHEETS2TABLE_PLUGIN_BASE_DIR", plugin_dir_path( __FILE__ ));
+define("SHEETS2TABLE_PLUGIN_BASE_URL", plugins_url('', __FILE__));
+
+// Initialize the class
+$GLOBALS['Sheets2Table'] = new Sheets2Table(__FILE__);
+
+// Include the working files necessary for the plugin to function
+require_once $GLOBALS['Sheets2Table']->get_admin_dir() . '/class-sheets2table-admin.php';
+require_once $GLOBALS['Sheets2Table']->get_library_dir() . '/sheets2table-functions.php';
+require_once $GLOBALS['Sheets2Table']->get_library_dir() . '/class-sheets2table-resources.php';
+require_once $GLOBALS['Sheets2Table']->get_library_dir() . '/class-sheets2table-csv.php';
+require_once $GLOBALS['Sheets2Table']->get_core_dir() . '/class-sheets2table-tables.php';
+require_once $GLOBALS['Sheets2Table']->get_core_dir() . '/sheets2table-shortcodes.php';
+
+
 /**
  * Sheets2Table class contains variables and information about the plugin
  *
@@ -27,23 +45,7 @@ Class Sheets2Table {
 	private $_core_dir = "core";
 	private $_resources_dir = "resources";
 			 
-	 /**
-	  * Handles the requests to add a custom links to the plugin page 
-	  * 
-	  * @since 0.4.0
-	  *
-	  * @param $array $links plugin links
-	  * @param string $admin_page  Optional. optional link to the admin page
-	  * 
-	  * @return $array plugin link
-	  */
-	function sheets2table_settings_link($links, $filter_array ="") { 
-		
-	  $settings_link = '<a href="options-general.php?page=sheets2table-admin.php">Settings</a>'; 
-	  array_push($links, $settings_link); 
-	  return $links; 
-	}
-	
+
 	 /**
 	  * Gets the render table shortcode string
 	  * 

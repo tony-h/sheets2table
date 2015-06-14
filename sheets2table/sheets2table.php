@@ -31,26 +31,19 @@
 // Wordpress security recommendation
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
-// Plugin base dir/url constants
-define("SHEETS2TABLE_PLUGIN_BASE_DIR", plugin_dir_path( __FILE__ ));
-define("SHEETS2TABLE_PLUGIN_BASE_URL", plugins_url('', __FILE__));
-
-// Load the plugin in class
-require_once( 'class-sheets2table.php' );
-
-// Initialize the class
-$GLOBALS['Sheets2Table'] = new Sheets2Table(__FILE__);
-
-// Include the working files necessary for the plugin to function
-require_once $GLOBALS['Sheets2Table']->get_admin_dir() . '/class-sheets2table-admin.php';
-require_once $GLOBALS['Sheets2Table']->get_library_dir() . '/sheets2table-functions.php';
-require_once $GLOBALS['Sheets2Table']->get_library_dir() . '/class-sheets2table-resources.php';
-require_once $GLOBALS['Sheets2Table']->get_library_dir() . '/class-sheets2table-csv.php';
-require_once $GLOBALS['Sheets2Table']->get_core_dir() . '/class-sheets2table-tables.php';
-require_once $GLOBALS['Sheets2Table']->get_core_dir() . '/sheets2table-shortcodes.php';
-
-// Add settings link on plugin page
-$plugin = plugin_basename(__FILE__); 
-add_filter("plugin_action_links_$plugin", array($GLOBALS['Sheets2Table'],'sheets2table_settings_link' ));
+// Version check
+// From: https://make.wordpress.org/plugins/2015/06/05/policy-on-php-versions/
+if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
+	add_action( 'admin_notices', 
+		create_function(
+			'', 
+			"echo '<div class=\"error\"><p>" . 
+			__('Sheets2Table requires PHP 5.3 to function properly. Please upgrade PHP or deactivate Sheet2sTable.', 'sheets2table') .
+			"</p></div>';" ) 
+		);
+	return;
+} else {
+	include 'class-sheets2table.php';
+}
 
 ?>
