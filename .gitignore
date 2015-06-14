@@ -1,6 +1,7 @@
 *.csv
 *.log
 .htaccess
+sheets2table.zip
 sitemap.xml
 sitemap.xml.gz
 wp-config.php

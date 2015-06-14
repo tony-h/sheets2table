@@ -128,7 +128,9 @@ function display_files() {
 function display_delete_file_form($file_name) {
 
 	#remove the file name from URL
-	$action = str_replace("&delete-file=$file_name", "", S2T_Functions::get_server_path_request());
+	$search = htmlspecialchars("&delete-file=$file_name");
+	$subject = S2T_Functions::get_server_path_request();
+	$action = str_replace($search, "", $subject);
 
 ?>
 		<form name="delete_file_confirm" method="post" action="<?php echo $action; ?>">		

@@ -164,7 +164,7 @@ EOD;
 	 */
 	public static function get_server_path_request() {
 		
-		$uri = str_replace( '%7E', '~', $_SERVER['REQUEST_URI']);
+		$uri = htmlspecialchars($_SERVER['REQUEST_URI']);
 		return $uri;
 	}
 
@@ -181,8 +181,9 @@ EOD;
 		$post_string = "";
 		
 		# If the POST data contains data, use it. Otherwise, return an empty array
-		if (isset($_POST[$name]) && $_POST[$name] != "")
-			$post_string = $_POST[$name];
+		if (isset($_POST[$name]) && $_POST[$name] != "") {
+			$post_string = sanitize_text_field($_POST[$name]);
+		}
 
 		return $post_string;
 	}
@@ -200,8 +201,9 @@ EOD;
 		$get_string = "";
 		
 		# If the POST data contains data, use it. Otherwise, return an empty array
-		if (isset($_GET[$name]) && $_GET[$name] != "")
-			$get_string = $_GET[$name];
+		if (isset($_GET[$name]) && $_GET[$name] != "") {
+			$get_string = sanitize_text_field($_GET[$name]);
+		}
 
 		return $get_string;
 	}
@@ -219,10 +221,35 @@ EOD;
 		$post_array = array();
 		
 		# If the POST data contains data, use it. Otherwise, return an empty array
-		if (isset($_POST[$name]) && count($_POST[$name]) > 0)
-			$post_array = $_POST[$name];
+		if (isset($_POST[$name]) && count($_POST[$name]) > 0) {
+		
+			# Sanitize the POST values before using them
+			$post_array =  S2T_Functions::sanitize_array_values($_POST[$name]);
+		}
 
 		return $post_array;
+	}
+	
+    /**
+     * Uses Wordpress function sanitize_text_field to sanitize any text array values
+	 *
+	 * @since 0.4.0
+	 *
+     * @param array $array array text values in an array to sanitize
+     * @return array an array containing the same elements that have been sanitized
+     */
+	public static function sanitize_array_values($array) {
+
+		$sanitized_array = array();
+	
+		# Loop through each array value and sanitize the value before
+		# adding it to the array
+	
+		for($i = 0; $i < count($array); $i++) {
+			$sanitized_array[$i] = sanitize_text_field($array[$i]);			
+		}
+
+		return $sanitized_array;	
 	}
 
 	/**

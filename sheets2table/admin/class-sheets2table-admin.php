@@ -36,7 +36,7 @@ include($GLOBALS['Sheets2Table']->get_library_dir() . '/class-sheets2table-messa
  */
 class S2T_Admin {
 	
-	 # Keys used for the tab data and settings
+	# Keys used for the tab data and settings
 	private $plugin_label = 'Sheets2Table';
 	private $plugin_url_slug = 'sheets2table-admin';
 	private $sheets_admin_key = 'sheets2table-admin-sheets';
@@ -141,17 +141,18 @@ class S2T_Admin {
 	 */
 	function plugin_options_page() {
 
-	$tab = isset( $_GET['tab'] ) ? $_GET['tab'] : $this->sheets_admin_key;
-		?> 
+		$tab = $this->get_current_tab();
+		
+?> 
 		<div class="wrap">
-			<?php $this->plugin_options_tabs(); ?>
+			<?php $this->plugin_options_tabs(); echo "\n"; ?>
 			<form method="post" action="options.php">
-				<?php wp_nonce_field( 'update-options' ); ?>
-				<?php settings_fields( $tab ); ?>
-				<?php do_settings_sections( $tab ); ?>
+				<?php wp_nonce_field( 'update-options' ); echo "\n"; ?>
+				<?php settings_fields( $tab ); echo "\n"; ?>
+				<?php do_settings_sections( $tab ); echo "\n"; ?>
 			</form>
 		</div>
-		<?php
+<?php
 		
 		// This loads the code for the active tab
 		require_once $tab . '.php';
@@ -168,16 +169,51 @@ class S2T_Admin {
 	 */
 	function plugin_options_tabs() {
 
-		$current_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : $this->sheets_admin_key;
+		$current_tab = $this->get_current_tab();
+?> 
+			<h2 class="nav-tab-wrapper">
+<?php
 
-		echo '<h2 class="nav-tab-wrapper">';
-		
+# The complete <tr> row
+$tab_html_format = <<<EOD
+				<a class="nav-tab %s" href="?page=%s&amp;tab=%s">%s</a>
+
+EOD;
+
 		foreach ( $this->plugin_settings_tabs as $tab_key => $tab_caption ) {
-			$active = $current_tab == $tab_key ? 'nav-tab-active' : '';
-			echo '<a class="nav-tab ' . $active . '" href="?page=' . $this->plugin_url_slug . '&tab=' . $tab_key . '">' . $tab_caption . '</a>';
+
+			$active = "";
+
+			# Determine if tab_key is the current tab. If true, mark as active 
+			# so the contents of the tab will be displayed
+			if ($current_tab == $tab_key) {
+				$active = 'nav-tab-active';
+			}
+			
+			#Build the tab
+			echo sprintf($tab_html_format, $active, $this->plugin_url_slug, $tab_key, $tab_caption);
+		}
+?>	
+			</h2>
+<?php
+	}
+	
+    /**
+     * Gets the string value of the current tab. If not set, uses the primary 
+	 * admin tab
+     * 
+     * @return string the value of the current tab or the default tab if not set
+     */
+	private function get_current_tab() {
+	
+		$tab = S2T_Functions::get_GET_string('tab');
+		
+		# If no tab is set, use the default tab
+		if ($tab == "") {
+			$tab = $this->sheets_admin_key;
 		}
 		
-		echo '</h2>';
-	}	
+		return $tab;
+	}
 };
 ?>

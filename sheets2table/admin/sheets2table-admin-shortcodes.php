@@ -87,8 +87,9 @@ function display_short_codes() {
 		
 	global $s2t_message;
 		
-	if ($options == null)
+	if ($options == null) {
 		$options = array();
+	}
 		
 	$column_list = "";
 	foreach($columns as $columnName) { 
@@ -143,7 +144,7 @@ EOD;
  
 	build_selection_form($csv_file_name, $column_list, $option_list);
 	
-	if(isset($_POST['build_shortcode']) && $_POST['build_shortcode'] == 'Y') {
+	if(S2T_Functions::get_POST_string('build_shortcode') == 'Y') {
 
 		$columns = S2T_Functions::get_POST_array("column");
 		$options = S2T_Functions::get_POST_array("option");
@@ -189,6 +190,8 @@ EOD;
  */
  function insert_column_checkboxes($column_list) {
 
+	$column_post_array = S2T_Functions::get_POST_array("column");
+ 
 	# loop through each column and build a checkbox
 	foreach ($column_list as $column) { 
 	
@@ -196,8 +199,9 @@ EOD;
 		# have to check the boxes again for a different set
 		# Default: unchecked
 		$checked = "";
-		if (in_array($column, S2T_Functions::get_POST_array("column")))
+		if (in_array($column, $column_post_array)) {
 			$checked = "checked";
+		}
 
 		build_check_box("column[]", $column, $checked, $column);		
 	} 
@@ -212,6 +216,8 @@ EOD;
  */
 function insert_option_checkboxes($option_list) {
 
+	$options_post_array = S2T_Functions::get_POST_array("option");
+
 	#loop through option and build a checkbox
 	foreach ($option_list as $option) {
 
@@ -219,8 +225,9 @@ function insert_option_checkboxes($option_list) {
 		# have to check the boxes again for a different set
 		# Default: unchecked
 		$checked = "";
-		if (in_array($option, S2T_Functions::get_POST_array("option")))
+		if (in_array($option, $options_post_array)) {
 			$checked = "checked";
+		}
 
 		build_check_box("option[]", $option, $checked, $option);
 	}

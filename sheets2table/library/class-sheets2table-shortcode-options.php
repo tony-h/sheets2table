@@ -88,8 +88,9 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 	 */
 	private function set_option_values($options_array) {
 		
-		if ($options_array == null || count($options_array) < 1)
+		if ($options_array == null || count($options_array) < 1) {
 			return;
+		}
 		
 		foreach ($options_array as $option) {
 			

@@ -29,10 +29,40 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
  */
 Class S2T_Message {
 
+	/**
+	 * The text for the shortcode message
+	 *
+	 * @since 0.4.0
+	 * @var string $shortcode
+	 */
 	public $shortcode = "shortcode";
+	/**
+	 * The text for the information message
+	 *
+	 * @since 0.4.0
+	 * @var string $information
+	 */
 	public $information = "information";
+	/**
+	 * The text for the error message
+	 *
+	 * @since 0.4.0
+	 * @var string $error
+	 */
 	public $error = "error";
+	/**
+	 * The text for the warning message
+	 *
+	 * @since 0.4.0
+	 * @var string $warning
+	 */
 	public $warning = "warning";
+	/**
+	 * The text for the success message
+	 *
+	 * @since 0.4.0
+	 * @var string $success
+	 */
 	public $success = "success";
 	
 	/*
@@ -45,8 +75,9 @@ Class S2T_Message {
 	*/
 	function print_message($message, $type = "") {
 		
-		if ($type == "")
+		if ($type == "") {
 			$type = $this->information;
+		}
 	
 	?>
 		<p class="message <?php echo $type; ?>"> <?php echo $message; ?></p>

@@ -20,6 +20,12 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
  */
 class S2T_Resources {
 
+	/**
+	 * The text for the delete_icon resource
+	 *
+	 * @since 0.4.0
+	 * @var string $delete_icon
+	 */
 	public static $delete_icon = "delete_icon.svg";
 	
     /**

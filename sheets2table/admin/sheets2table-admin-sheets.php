@@ -25,7 +25,9 @@ $save_as = S2T_Functions::read_from_settings_file($save_as_settings_file);
 if (S2T_Functions::get_POST_string('google_sheets_id') != "") {
 	$google_sheets_id = trim(S2T_Functions::get_POST_string('google_sheets_id'));
 }
-if (S2T_Functions::get_POST_string('save_as') != "") {
+
+# If any value is in the save_as field (even a blank), use it
+if (isset($_POST['save_as'])) {
 	$save_as = trim(S2T_Functions::get_POST_string('save_as'));
 }
 
@@ -48,13 +50,12 @@ if (S2T_Functions::get_POST_string('save_as') != "") {
 			<input type="submit" name="Submit" value="Save and View Data" /> 
 		</p>
 	</form>
-	<p class="label"><b>Step 4: Configure a shortcode and add it to any webpage or blog post.</b></p>
 </div>
 <hr />
 
 <?php
 
-# Scan for  POST values
+# Scan for POST values
 $form_submit = S2T_Functions::get_POST_string('get_sheet_submit');
 
 # If the form has been submitted, process the request
@@ -77,6 +78,32 @@ if($form_submit == 'Y') {
 	get_csv_file($google_sheets_id, $save_as);
 }
 
+/**
+ * 
+ * Displays the instructions for the final steps
+ * 
+ */
+function display_final_steps() {
+
+	# Add a direct URL to the shortcodes page
+
+	$search_string = "sheets2table-admin-sheets";
+	$replace_string = "sheets2table-admin-shortcodes";
+	$current_url = S2T_Functions::get_server_path_request();
+	$str_pos = strpos($current_url, $search_string);
+
+	if (strpos($current_url, $search_string) > 0) {
+		$shortcode_url = str_replace($search_string, $replace_string, $current_url);
+	} else {
+		$shortcode_url = $current_url . "&tab=" . $replace_string;
+	}
+	
+?>
+	<hr />
+	<p class="label"><b>Step 4: <a href="<?php echo $shortcode_url; ?>" >Configure a shortcode</a> and add it to any webpage or blog post.</b></p>
+<?php
+}
+
 /*
  * Processes the data in the form and saves the CSV file
  *
@@ -96,23 +123,30 @@ function get_csv_file($google_sheets_id, $save_as_file_name) {
 		return "";
 	}
 
+	# This is the path of the file once it is downloaded, or of the existing file
+	$downloaded_file_path = $GLOBALS['Sheets2Table']->get_resources_dir() . "/$save_as_file_name";
+
+	# Create a backup of the file, if one exists in case of download fail
+	$s2t_csv_backup = new S2T_CSV($downloaded_file_path);
+	$s2t_csv_backup->backup();
+	
 	# Construct the URL for the CSV file
 	$csv_url = "https://docs.google.com/spreadsheets/d/" . 	
 				$google_sheets_id .
 				"/export?format=csv";
 
-	$message = "Retrieving Google Sheet from <a href=\"$csv_url\">$csv_url</a>";
+	$message = "Retrieving Google Sheet from <a href='$csv_url'>$csv_url</a>";
 	$s2t_message->print_message($message);
 	
 	# Get the file contents
 	$downloaded_csv_contents = @file_get_contents($csv_url);
-	$downloaded_file_path = $GLOBALS['Sheets2Table']->get_resources_dir() . "/$save_as_file_name";
 	
 	# Do not create an empty file if nothing was retrieved. An error will be generated later.
 	if (!empty($downloaded_csv_contents)) {
 		file_put_contents($downloaded_file_path, $downloaded_csv_contents);
 	}
-	
+
+	# Get the CSV object of the downloaded file
 	$s2t_csv = new S2T_CSV($downloaded_file_path);
 	
 	# Verify the file was downloaded. If not, display message and return empty string
@@ -122,12 +156,21 @@ function get_csv_file($google_sheets_id, $save_as_file_name) {
 					2) The sharing settings are set to anyone with a link can view.";
 		$s2t_message->print_message($message, $s2t_message->error);
 		$downloaded_file_path = "";
+
+		# Attempt to restore the file if a backup exists
+		$s2t_csv_backup->restore();
 		
 	} else {
 	
 		# File retrieved, keep processing
+		# Delete the backup file
+		$s2t_csv_backup->delete();
+		
 		$message = "Saved Google Sheet to '$save_as_file_name' (" . $s2t_csv->get_file_size() . ")";
 		$s2t_message->print_message($message, $s2t_message->success);
+		
+		# Prompt the user for the next steps
+		display_final_steps();
 		
 		# Read and display the contents of the CSV file
 		display_csv_data($s2t_csv);		
@@ -146,7 +189,10 @@ function get_csv_file($google_sheets_id, $save_as_file_name) {
  */
 function display_csv_data($s2t_csv) {
 
-	echo "<hr />";
+?>
+		<hr />
+		<h3>Data preview</h3>
+<?php
 
 	# Display the results in a table for quick verification
 	$s2t_table = new S2T_Table();
