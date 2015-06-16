@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 ?>
 	<div class="wrap">
-		<h2>SheetsToTable File Management Tools</h2>
+		<h2>Sheets2Table File Management Tools</h2>
 		<p>Perform basic file-based operations.</p>
 		<hr />
 <?php

@@ -40,10 +40,9 @@ if (isset($_POST['save_as'])) {
 	
 	<form name="get_data" method="post" action="<?php echo S2T_Functions::get_server_path_request(); ?>">
 		<input type="hidden" name="get_sheet_submit" value="Y">
-		<p class="label">Step 1: Enter the Google Spreadsheet ID</p>
-		<label>https://docs.google.com/spreadsheets/d/<input type="text" name="google_sheets_id" value="<?php echo $google_sheets_id; ?>" />/export?format=csv</label>
-
-		<p class="label">Step 2: Enter a name to save the file to</p>
+		<p class="label">Step 1: Enter the Google Sheet ID</p>
+		<label>https://docs.google.com/spreadsheets/d/<input type="text" name="google_sheets_id" value="<?php echo $google_sheets_id; ?>" />/edit
+		<p class="label">Step 2: Enter a name to save the file as</p>
 		<label><input type="text" name="save_as" value="<?php echo $save_as; ?>" />.csv</label><br />By default this is the ID of the Google Sheet
 		<p class="submit label">
 			Step 3: Retrieve the file from the Google Sheet<br />
@@ -71,9 +70,9 @@ if($form_submit == 'Y') {
 		$save_as = $google_sheets_id;
 	}
 
-	# Remove any whitespaces and build the file name
-	$save_as = S2T_Functions::whitespace_to_underscore($save_as) . ".csv";
-
+	# Sanitize the user entered name and build the file name
+	$save_as = sanitize_file_name($save_as) . ".csv";
+	
 	// Download the data and get the local file path
 	get_csv_file($google_sheets_id, $save_as);
 }

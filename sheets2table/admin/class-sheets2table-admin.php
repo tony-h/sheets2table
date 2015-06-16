@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 add_action( 'plugins_loaded', create_function( '', '$S2T_Admin = new S2T_Admin;' ) );
 
 # PHP includes go here. Any HTML includes go in function plugin_options_page()
-include($GLOBALS['Sheets2Table']->get_library_dir() . '/class-sheets2table-message.php');
+include($GLOBALS['Sheets2Table']->get_includes_dir() . '/class-sheets2table-message.php');
 
 /*
  * The main admin class.  

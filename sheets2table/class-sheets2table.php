@@ -19,13 +19,17 @@ define("SHEETS2TABLE_PLUGIN_BASE_DIR", plugin_dir_path( __FILE__ ));
 define("SHEETS2TABLE_PLUGIN_BASE_URL", plugins_url('', __FILE__));
 
 // Initialize the class
-$GLOBALS['Sheets2Table'] = new Sheets2Table(__FILE__);
+$GLOBALS['Sheets2Table'] = new Sheets2Table( __FILE__ );
+
+// If logged in as admin, enable the admin panel
+if ( 'is_admin' ) {
+	require_once $GLOBALS['Sheets2Table']->get_admin_dir() . '/class-sheets2table-admin.php';
+}
 
 // Include the working files necessary for the plugin to function
-require_once $GLOBALS['Sheets2Table']->get_admin_dir() . '/class-sheets2table-admin.php';
-require_once $GLOBALS['Sheets2Table']->get_library_dir() . '/sheets2table-functions.php';
-require_once $GLOBALS['Sheets2Table']->get_library_dir() . '/class-sheets2table-resources.php';
-require_once $GLOBALS['Sheets2Table']->get_library_dir() . '/class-sheets2table-csv.php';
+require_once $GLOBALS['Sheets2Table']->get_includes_dir() . '/sheets2table-functions.php';
+require_once $GLOBALS['Sheets2Table']->get_includes_dir() . '/class-sheets2table-resources.php';
+require_once $GLOBALS['Sheets2Table']->get_includes_dir() . '/class-sheets2table-csv.php';
 require_once $GLOBALS['Sheets2Table']->get_core_dir() . '/class-sheets2table-tables.php';
 require_once $GLOBALS['Sheets2Table']->get_core_dir() . '/sheets2table-shortcodes.php';
 
@@ -41,7 +45,7 @@ Class Sheets2Table {
 	private $_render_table_shortcode = "sheets2table-render-table";
 	private $_required_php_version = "5.3.0";	
 	private $_admin_dir = "admin";
-	private $_library_dir = "library";
+	private $_includes_dir = "includes";
 	private $_core_dir = "core";
 	private $_resources_dir = "resources";
 			 
@@ -99,8 +103,8 @@ Class Sheets2Table {
 	  *
 	  * @return $string path to the library directory
 	  */
-	function get_library_dir() {
-		return SHEETS2TABLE_PLUGIN_BASE_DIR . '/' . $this->_library_dir;
+	function get_includes_dir() {
+		return SHEETS2TABLE_PLUGIN_BASE_DIR . '/' . $this->_includes_dir;
 	}
 	
 	 /**
@@ -111,7 +115,7 @@ Class Sheets2Table {
 	  * @return $string URL to the library directory
 	  */
 	function get_library_url() {
-		return SHEETS2TABLE_PLUGIN_BASE_URL . '/' . $this->_library_dir;
+		return SHEETS2TABLE_PLUGIN_BASE_URL . '/' . $this->_includes_dir;
 	}
 	
 	 /**

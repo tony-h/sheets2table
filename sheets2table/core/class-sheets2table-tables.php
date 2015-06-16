@@ -12,8 +12,8 @@
 # Wordpress security recommendation
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
-require_once $GLOBALS['Sheets2Table']->get_library_dir() . '/class-sheets2table-shortcode-options.php';
-require_once $GLOBALS['Sheets2Table']->get_library_dir() . '/class-sheets2table-csv.php';
+require_once $GLOBALS['Sheets2Table']->get_includes_dir() . '/class-sheets2table-shortcode-options.php';
+require_once $GLOBALS['Sheets2Table']->get_includes_dir() . '/class-sheets2table-csv.php';
 
 /**
  * Builds an HTML table from the data in a CSV file
