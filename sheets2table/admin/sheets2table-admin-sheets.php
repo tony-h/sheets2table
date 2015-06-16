@@ -28,7 +28,10 @@ if (S2T_Functions::get_POST_string('google_sheets_id') != "") {
 
 # If any value is in the save_as field (even a blank), use it
 if (isset($_POST['save_as'])) {
+	
+	# Get and sanitize the save_as file name
 	$save_as = trim(S2T_Functions::get_POST_string('save_as'));
+	$save_as = sanitize_file_name($save_as);
 }
 
 ?>
@@ -65,13 +68,12 @@ if($form_submit == 'Y') {
 	S2T_Functions::write_to_settings_file($save_as_settings_file, $save_as);
 
 	#Get the save-as file name if the user entered one. Otherwise, use the sheet ID
-	$save_as = trim(S2T_Functions::get_POST_string('save_as'));
 	if ($save_as == "") {
 		$save_as = $google_sheets_id;
 	}
 
-	# Sanitize the user entered name and build the file name
-	$save_as = sanitize_file_name($save_as) . ".csv";
+	# Build the file name
+	$save_as = $save_as . ".csv";
 	
 	// Download the data and get the local file path
 	get_csv_file($google_sheets_id, $save_as);

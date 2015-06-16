@@ -108,11 +108,11 @@ Class Sheets2Table {
 	}
 	
 	 /**
-	  * Gets the URL to the library directory
+	  * Gets the URL to the includes/library directory
 	  * 
 	  * @since 0.4.0
 	  *
-	  * @return $string URL to the library directory
+	  * @return $string URL to the includes/library directory
 	  */
 	function get_library_url() {
 		return SHEETS2TABLE_PLUGIN_BASE_URL . '/' . $this->_includes_dir;
