@@ -30,6 +30,7 @@ if ( 'is_admin' ) {
 require_once $GLOBALS['Sheets2Table']->get_includes_dir() . '/sheets2table-functions.php';
 require_once $GLOBALS['Sheets2Table']->get_includes_dir() . '/class-sheets2table-resources.php';
 require_once $GLOBALS['Sheets2Table']->get_includes_dir() . '/class-sheets2table-csv.php';
+require_once $GLOBALS['Sheets2Table']->get_includes_dir() . '/class-sheets2table-save-as-file.php';
 require_once $GLOBALS['Sheets2Table']->get_core_dir() . '/class-sheets2table-tables.php';
 require_once $GLOBALS['Sheets2Table']->get_core_dir() . '/sheets2table-shortcodes.php';
 

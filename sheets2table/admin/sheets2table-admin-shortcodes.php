@@ -19,7 +19,13 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 	<p>Sheets2Table plugin makes use of custom shortcodes that render a table based on the data in the CSV file.<p>
 	<p>Copy/paste a shortcode to your post or page to display the contents of the Google Sheet as a table.</p>
 	<p>These codes provide a template or starting point to help customize the fields to display. Please note: The <i>columns</i> and <i>titles</i> should contain the same number of elements.</p>
+	<h3>Shortcode Options</h3>
+	<ul>
+		<li><b>use-foo-table</b>: Using this option enables the table to be used with the Footable plugin. Without the Footable plugin, this option has no effect. </li>
+		<li><b>get-latest-data</b>: Using this option always displays the latest tabular data from the Google Sheet. Otherwise, the last snapshot of the Google sheet is used.</li>
+	</ul>
 	<hr />
+	<h3>Shortcodes</h3>
 <?php 
 
 	# Look for a shortcode in the GET request.
@@ -59,18 +65,20 @@ function display_short_codes() {
 	
 	# Loop through each csv file and build the default shortcodes
 	foreach($csv_files as $csv) { 
-		
+	
 		$s2t_csv = new S2T_CSV($csv);
 		$file_name = $s2t_csv->get_file_name();
+	
+?>
+		<a href="<?php echo $_SERVER['REQUEST_URI'] . "&shortcode=$file_name"; ?>">Customize</a>
+		<i><?php echo $file_name; ?></i> code</h4>: 
+<?php
 
 		# Build a default shortcode (with everything in it)
 		$columns_headers = $s2t_csv->get_headers();
 		display_shortcode($file_name, $columns_headers);
 		
-?>
-		<a href="<?php echo $_SERVER['REQUEST_URI'] . "&shortcode=$file_name"; ?>">Customize <i><?php echo $file_name; ?></i></a>
-		<hr />
-<?php
+		echo "<hr />";
 	}	
 }
 
@@ -102,8 +110,6 @@ function display_short_codes() {
 	
 	# Convert the array to a comma delimited string
 	$shortcode_options = implode(",", $options);
-	
-	echo "<i>$file_name</i> code</h4>";
 
 	# Produce a warning for empty codes
 	if (count($columns) == 0) {

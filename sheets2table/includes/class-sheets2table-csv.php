@@ -50,25 +50,40 @@ Class S2T_CSV {
 	 *
 	 * @since 0.4.0
 	 *
-	 * @param string $file_path or file name name of CSV file
+	 * @param string $file_name file name of CSV file
 	 */
-	public function __construct($file_path) {
+	public function __construct($file_name) {
 	
 		# Nothing to do. Exit and let other errors fly
-		if ($file_path == "") {
+		if ($file_name == "") {
 			return;
 		}
 		
-		# If the file doesn't exist, assume it is only the file name. 
-		# Prepend the dir to the file name
-		if (!file_exists($file_path)) {
-			$this->_file_name = $file_path;
-			$this->_file_path = $GLOBALS['Sheets2Table']->get_resources_dir() . "/$file_path";
-		} else {
-			$this->_file_name = basename($file_path);
-			$this->_file_path = $file_path; 
-		}
-	}	
+		# Construct the file path to the CSV file in the resources dir
+		$this->_file_name = basename($file_name);
+		$this->_file_path = $GLOBALS['Sheets2Table']->get_resources_dir() . "/" . $this->_file_name; 
+	}
+	
+	// -------------------- Begin static methods ----------------------------------
+	
+	/**
+	 * Gets the URL to the Google sheet
+	 *
+	 * @since 0.4.1
+	 *
+     * @param string $google_sheets_id ID of the Google sheet to get the data from
+	 */
+	public static function get_googlesheet_csv_url($google_sheets_id) {
+		
+		# Construct the URL for the CSV file
+		$csv_url = "https://docs.google.com/spreadsheets/d/" . 	
+					$google_sheets_id .
+					"/export?format=csv";
+
+		return $csv_url;
+	}
+	
+	// -------------------- Begin instance methods ----------------------------------
 	
 	/**
 	 * Returns true or false if the file is valid and contains data
@@ -130,13 +145,14 @@ Class S2T_CSV {
 	}
 	
 	/**
-	 * Restores a backed up up CSV file
+	 * Restores a backed up of the CSV file
 	 *
 	 * @since 0.4.0
 	 *
 	 * @returns bool value of true if successfully restored, otherwise returns false
 	 */
 	public function restore() {
+	
 		$result = false;
 	
 		if ($this->is_valid_file()) {
@@ -250,6 +266,49 @@ Class S2T_CSV {
 			return array();
 		}
 	}
+	
+	/**
+	 * Gets the CSV data from the Google sheet using the sheet's ID
+	 *
+	 * @since 0.4.1
+	 *
+      * @param string $google_sheets_id ID of the Google sheet to get the data from
+	 */
+	public function populate_csv_file($google_sheets_id) {
+
+		# Create a backup as to not overwrite the file in a failed download
+		$s2t_csv_backup = new S2T_CSV($this->_file_name); 
+		$backup_result = $s2t_csv_backup->backup();
+		
+		# Get the file contents
+		$downloaded_csv_contents = @file_get_contents(S2T_CSV::get_googlesheet_csv_url($google_sheets_id));
+		
+		# Do not create an empty file if nothing was retrieved. An error will be generated later.
+		if (!empty($downloaded_csv_contents)) {
+			file_put_contents($this->_file_path, $downloaded_csv_contents);
+		}
+		
+		$result = $this->is_valid_file();
+		
+		# Based on success, either delete the backup or restore the file
+		if (!$result) {
+
+			# Attempt to restore the file if a backup exists
+			if ($backup_result) {
+				$s2t_csv_backup->restore();
+			}
+			
+		} else {
+		
+			# Delete the backup file, if one was created
+			if ($backup_result) {
+				$s2t_csv_backup->delete();
+			}
+		}
+		
+		# Return the result of retrieving the file and successfully saving it
+		return $result;
+	}	
 }
 
 ?>

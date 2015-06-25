@@ -155,10 +155,14 @@ function delete_csv_file($file_name) {
 
 	global $s2t_message;
 
-	# Remove the file
+	# Remove the csv file
 	$s2t_csv = new S2T_CSV($file_name);
 	$result = $s2t_csv->delete();
 
+	# Delete the text file that links it to the Google Sheet ID
+	$associated_file = new S2T_Save_As_File($file_name);
+	$associated_file->delete();
+	
 	#Display a message based on the result
 	if ($result) {
 		$message = $file_name . " successfully deleted.";

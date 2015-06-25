@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Sheets2Table
  * Description: Sheets2Table builds an HTML table from a Google Sheet
- * Version: 	0.4.0
+ * Version: 	0.4.1
  * Author: 		Tony Hetrick
  * Author URI:	http://www.tonyhetrick.com
  * License: 	GNU General Public License (GPL) version 3

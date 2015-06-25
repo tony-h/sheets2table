@@ -13,7 +13,6 @@
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 require_once $GLOBALS['Sheets2Table']->get_includes_dir() . '/class-sheets2table-shortcode-options.php';
-require_once $GLOBALS['Sheets2Table']->get_includes_dir() . '/class-sheets2table-csv.php';
 
 /**
  * Builds an HTML table from the data in a CSV file
@@ -35,11 +34,22 @@ Class S2T_Table {
 	 */
 	public function build_table($csv_file, $columns_array, $columns_titles, $options_array) {
 
-		$s2t_csv = new S2T_CSV($csv_file);
-		$rows = $s2t_csv->convert_to_array();		
-
 		# Get the options
 		$shortcode_options = new S2T_Shortcode_Options($options_array);
+
+		# Initialize the CSV file
+		$s2t_csv = new S2T_CSV($csv_file);
+		
+		# If the option is set to always get the latest data, update the CSV
+		# file before continuing
+		if ($shortcode_options->get_latest_data()) {
+		
+			$file_info = new S2T_Save_As_File($s2t_csv->get_file_name());
+			$s2t_csv->populate_csv_file($file_info->get_google_sheet_id());
+		}
+		
+		# Get the data from the CSV file
+		$rows = $s2t_csv->convert_to_array();		
 
 		# Build the table
 		# 1) Build the header
